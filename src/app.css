@@ -1,0 +1,16 @@
+@font-face {
+  font-family: red-hat;
+  src: url('/Red_Hat_Text/RedHatText-VariableFont_wght.ttf') format('truetype');
+}
+
+* {
+  outline: none;
+  font-family: red-hat, times, arial;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+}
