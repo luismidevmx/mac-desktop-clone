@@ -1,15 +1,19 @@
 <script lang="ts">
+  // icons
   import calculator from '../assets/icons/Calculator.png'
   import appStore from '../assets/icons/AppStore.png'
   import notes from '../assets/icons/Notes.png'
   import safari from '../assets/icons/Safari.png'
 
-  const icons = [{ src: calculator }, { src: appStore }, { src: notes }, { src: safari }]
+  // stores
+  import windows from '../stores/windowsStore'
+
+  const icons = [{ src: calculator, appName: 'calculator' }, { src: appStore }, { src: notes }, { src: safari }]
 </script>
 
 <div class="dock">
-  {#each icons as { src }}
-    <button class="dock-app">
+  {#each icons as { src, appName }}
+    <button class="dock-app" on:click={windows.push$(appName)}>
       <img {src} alt="icon from sass" />
     </button>
   {/each}

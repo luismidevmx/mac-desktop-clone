@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store'
-import { findIndex, random, sortBy } from 'lodash'
+import { findIndex, sortBy } from 'lodash'
+import { generate as shortid } from 'shortid'
 
 interface IZIndex {
   id: number
@@ -11,7 +12,7 @@ function createZIndexStore() {
   let max = 1000
 
   const register = () => {
-    const id = random(1000)
+    const id = shortid(1000)
 
     update(prev => [...prev, { zIndex: max, id }])
 

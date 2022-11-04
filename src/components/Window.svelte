@@ -1,25 +1,21 @@
 <script lang="ts">
   import Fa from 'svelte-fa/src/fa.svelte'
   import { faXmark, faMinus, faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons'
-
-  let moving = false,
-    resizing = false,
-    kw = 0,
-    kh = 0,
-    kx = 0,
-    ky = 0,
-    zIndex = 1,
-    className = ''
-
-  /** overlay management */
+  import windowsStore from '../stores/windowsStore'
   import zIndexStore from '../stores/zIndexStore'
-  export const id = zIndexStore.register()
 
-  zIndexStore.listen(id, ({ zIndex: z }) => (zIndex = z))
+  // prettier-ignore
+  let moving = false, resizing = false, kw = 0, kh = 0, kx = 0, ky = 0, zIndex = 1, className = ''
 
+  // overlay management
+  const zIndexId = zIndexStore.register()
+  zIndexStore.listen(zIndexId, ({ zIndex: z }) => (zIndex = z))
+
+  // attributes
   export let borders = false
   export let expandable = true
   export let height = 300
+  export let id = ''
   export let minHeight = 10
   export let minWidth = 10
   export let resizable = true
@@ -72,7 +68,7 @@
   }
 
   function btf() {
-    zIndexStore.focus(id)
+    zIndexStore.focus(zIndexId)
   }
 
   function reset() {
@@ -109,7 +105,7 @@
       </button>
     {/if}
 
-    <button class="window-control" title="close">
+    <button class="window-control" title="close" on:click={windowsStore.delete$(id)}>
       <Fa icon={faXmark} />
     </button>
   </div>

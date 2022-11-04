@@ -1,44 +1,53 @@
 import { writable } from 'svelte/store'
-import { random, findIndex } from 'lodash'
+import { remove, findIndex } from 'lodash'
+import { generate as shortid } from 'shortid'
 
-interface IWindow {
-  borders?: boolean
-  height?: number
-  title?: string
-  type?: string
-  width?: number
-  x?: number
-  y?: number
+export interface IWindowBase {
+  type: string
+  data: any
 }
 
-interface IWindowStrict extends IWindow {
-  id: number
-  zIndex: 10 | 20
+export interface IWindowInternal extends IWindowBase {
+  id: string
 }
 
 function createWindowsStore() {
-  const { subscribe, set, update } = writable<IWindowStrict[]>([])
+  const { subscribe, set, update } = writable<IWindowInternal[]>([])
 
-  const add = (w: IWindow) => {
-    const id = random(1000)
+  const push$ = (type: string, data: any = {}) => {
+    if (type) {
+      return () => update(prev => [...prev, { type, data, id: shortid() }])
+    }
 
-    update(prev => [...prev, { ...w, zIndex: 10, id }])
-
-    return id
+    return () => {}
   }
 
-  const focus = (id: number) =>
+  const edit$ =
+    (id: string) =>
+    (data: any = {}) => {
+      let newData: any
+
+      update(prev => {
+        const i = findIndex(prev, { id })
+
+        if (i !== -1) {
+          prev[i].data = { ...prev[i].data, ...data }
+        }
+        newData = prev[i].data
+
+        return prev
+      })
+
+      return newData
+    }
+
+  const delete$ = (id: string) => () =>
     update(prev => {
-      const i = findIndex(prev, { id })
-      const j = findIndex(prev, { zIndex: 20 })
-
-      if (i !== -1) prev[i].zIndex = 20
-      if (j !== -1) prev[j].zIndex = 10
-
+      remove(prev, { id })
       return prev
     })
 
-  return { subscribe, set, update, add, focus }
+  return { subscribe, set, update, push$, delete$, edit$ }
 }
 
 const windowsStore = createWindowsStore()
