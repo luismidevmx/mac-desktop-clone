@@ -70,7 +70,7 @@ function createWindowsStore() {
       // if exists, modify this item
       if (i !== -1) {
         prev[i].data = {}
-        prev[i].type = 'closedwindow'
+        prev[i].type = ''
       }
 
       return prev
@@ -80,7 +80,6 @@ function createWindowsStore() {
   const editSafe = (id: string, data: IWindowData) => transform(id, prev => ({ ...data, ...prev }))
 
   const remove$ = (id: string) => () => remove(id)
-
   const edit$ = (id: string) => (data: IWindowData) => edit(id, data)
   const editSafe$ = (id: string) => (data: IWindowData) => editSafe(id, data)
   const transform$ = (id: string) => (transformItem: (data: IWindowData) => IWindowData) => transform(id, transformItem)

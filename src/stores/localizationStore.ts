@@ -3,6 +3,7 @@ import { findIndex } from 'lodash'
 
 /**
  * TODO: rename this sh1ts
+ * @deprecated
  */
 
 interface IWindowBase {

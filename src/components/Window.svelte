@@ -29,51 +29,54 @@
   export let y = 200
   export let width = 400
   export let height = 300
-  export let expanded = false
+  // export let expanded = false
 
   // saving z-index when focus
   const zIndexId = zIndexStore.register(id)
   zIndexStore.listen(zIndexId, ({ zIndex: z }) => (zIndex = z))
 
-  // saving x,y... to another instances of same app
-  const edit = windowsStore.edit$(id)
-  const editSafe = windowsStore.editSafe$(id)
-  const transform = windowsStore.transform$(id)
+  // // saving x,y... to another instances of same app
+  // const edit = windowsStore.edit$(id)
+  // const editSafe = windowsStore.editSafe$(id)
+  // const transform = windowsStore.transform$(id)
 
-  editSafe({ x, y, width, height, expanded })
+  // editSafe({ x, y, width, height, expanded })
 
-  windowsStore.watch(id, newData => {
-    x = newData.x
-    y = newData.y
-  })
+  // windowsStore.watch(id, newData => {
+  //   x = newData.x
+  //   y = newData.y
+  // })
 
-  function moveAndResize(e) {
+  function refresh(e) {
     move(e.movementX, e.movementY)
 
     if (resizing) {
       width += kw * e.movementX
       height -= kh * e.movementY
-      x += kx * e.movementX
-      y -= ky * e.movementY
+
+      move(kx * e.movementX, ky * e.movementY)
 
       if (width < minWidth) {
         // avoiding delay by pixels replacement
         width = minWidth
-        x -= kx * e.movementX
+        move(-kx * e.movementX, 0)
       }
 
       if (height < minHeight) {
         // avoiding delay by pixels replacement
         height = minHeight
-        y += ky * e.movementY
+        move(0, -ky * e.movementY)
       }
     }
   }
 
   function move(dx: number, dy: number) {
-    if (moving)
-      // saving into global store
-      transform(({ x, y }) => ({ x: x + dx, y: y - dy }))
+    if (moving || resizing) {
+      x += dx
+      y -= dy
+    }
+    // saving into global store
+    // transform(({ x, y }) => ({ x: x + dx, y: y - dy }))
   }
 
   function resize$(_kw = 0, _kh = 0, _kx = 0, _ky = 0) {
@@ -101,7 +104,7 @@
   }
 </script>
 
-<svelte:window on:mouseup={reset} on:mousemove={moveAndResize} />
+<svelte:window on:mouseup={reset} on:mousemove={refresh} />
 
 <div
   class="window animate__backOutDown {className}"
@@ -130,7 +133,7 @@
       </button>
     {/if}
 
-    <button class="window-control" title="close {id}" on:click={windowsStore.remove$(id)}>
+    <button class="window-control" title="close" on:click={windowsStore.remove$(id)}>
       <Fa icon={faXmark} />
     </button>
   </div>
@@ -138,8 +141,7 @@
   <div class="window-content {borders}"><slot /></div>
 
   <slot name="window-footer">
-    <!-- <small>{id} [ {data?.x}, {data?.y} ] {data?.width}x{data?.height}</small> -->
-    <small>{id} [ x: {x}, y: {y} ]</small>
+    <!-- <small>{id} [ x: {x}, y: {y} ]</small> -->
   </slot>
 
   <!-- resizers -->

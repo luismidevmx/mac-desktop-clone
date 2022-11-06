@@ -8,7 +8,7 @@
   // stores
   import windows from '../stores/windowsStore'
 
-  const icons = [{ src: calculator, appName: 'calculator' }, { src: appStore }, { src: notes }, { src: safari }]
+  const icons = [{ src: calculator, appName: 'Calculator' }, { src: notes, appName: 'Notepad' }, { src: appStore }, { src: safari }]
 </script>
 
 <div class="dock">

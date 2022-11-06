@@ -12,14 +12,14 @@
   let value = ''
   let writting = false
 
-  let data = {
-    x: 200,
-    y: 300,
-    height: 285,
-    minHeight: 285,
-    width: 300,
-    minWidth: 200
-  }
+  // let data = {
+  //   x: 200,
+  //   y: 300,
+  //   height: 285,
+  //   minHeight: 285,
+  //   width: 200,
+  //   minWidth: 200
+  // }
 
   // methods
   function addChar(char: string) {
@@ -28,7 +28,10 @@
         return clear
 
       case 8592: // delete one char
-        return () => (value = value.slice(0, value.length - 1))
+        return () => {
+          value = value.slice(0, value.length - 1)
+          calc()
+        }
 
       case 61: // equal
         return () => {
@@ -70,7 +73,7 @@
   }
 </script>
 
-<Window title="Calculator" expandable={false} {...data} {id}>
+<Window title="Calculator" {id} expandable={false} x={200} y={300} height={285} minHeight={285} width={200} minWidth={200}>
   <div class="calculator">
     <div class="calculator-display">
       <input class="calculator-entry" bind:value type="text" />
