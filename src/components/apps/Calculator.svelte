@@ -2,32 +2,24 @@
   import Window from '../Window.svelte'
   import { evaluate } from 'mathjs'
 
-  import windowsStore from '../../stores/windowsStore'
-
   // params
   export let id: string
 
   // core variables
-  const edit = windowsStore.edit$(id)
   const chars = 'C()÷789⨯456-123+0.←='.split('')
   let isError = ''
   let result = 0
   let value = ''
   let writting = false
-  let x: number, y: number
 
-  let data = edit({
+  let data = {
     x: 200,
     y: 300,
     height: 285,
     minHeight: 285,
-    width: 200,
+    width: 300,
     minWidth: 200
-  })
-
-  $: edit({ x, y })
-
-  $: console.log($windowsStore)
+  }
 
   // methods
   function addChar(char: string) {
@@ -78,7 +70,7 @@
   }
 </script>
 
-<Window title="Calculator" expandable={false} bind:x bind:y {...data} {id}>
+<Window title="Calculator" expandable={false} {...data} {id}>
   <div class="calculator">
     <div class="calculator-display">
       <input class="calculator-entry" bind:value type="text" />
@@ -92,8 +84,6 @@
       </button>
     {/each}
   </div>
-
-  <small slot="window-footer">[id: {id}]</small>
 </Window>
 
 <style lang="less">

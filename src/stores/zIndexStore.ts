@@ -3,7 +3,7 @@ import { findIndex, sortBy } from 'lodash'
 import { generate as shortid } from 'shortid'
 
 interface IZIndex {
-  id: number
+  id: string
   zIndex: number
 }
 
@@ -11,21 +11,19 @@ function createZIndexStore() {
   const { subscribe, set, update } = writable<IZIndex[]>([])
   let max = 1000
 
-  const register = () => {
-    const id = shortid(1000)
-
-    update(prev => [...prev, { zIndex: max, id }])
+  const register = (id: string) => {
+    update(prev => [...prev, { zIndex: max, id: id.trim() ?? shortid() }])
 
     return id
   }
 
-  const listen = (id: number, cb: Function) =>
+  const listen = (id: string, cb: Function) =>
     subscribe(items => {
       const i = findIndex(items, { id })
       if (i >= 0) cb(items[i])
     })
 
-  const focus = (id: number) =>
+  const focus = (id: string) =>
     update(prev => {
       const i = findIndex(prev, { id })
       const j = findIndex(prev, { zIndex: max })

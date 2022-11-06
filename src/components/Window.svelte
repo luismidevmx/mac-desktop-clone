@@ -1,37 +1,56 @@
 <script lang="ts">
+  import { generate as shortid } from 'shortid'
+  // icons
   import Fa from 'svelte-fa/src/fa.svelte'
   import { faXmark, faMinus, faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons'
+
+  // stores
   import windowsStore from '../stores/windowsStore'
   import zIndexStore from '../stores/zIndexStore'
 
+  // core variables
   // prettier-ignore
-  let moving = false, resizing = false, kw = 0, kh = 0, kx = 0, ky = 0, zIndex = 1, className = ''
+  let className = '', kh = 0, kw = 0, kx = 0, ky = 0, resizing = false, zIndex = 1, moving = false
 
-  // overlay management
-  const zIndexId = zIndexStore.register()
-  zIndexStore.listen(zIndexId, ({ zIndex: z }) => (zIndex = z))
-
-  // attributes
-  export let borders = false
-  export let expandable = true
-  export let height = 300
-  export let id = ''
-  export let minHeight = 10
-  export let minWidth = 10
-  export let resizable = true
+  // params
+  // "immutable"
+  export let id = shortid()
   export let title = 'Program'
-  export let width = 400
-  export let x = 0
-  export let y = 0
   export { className as class }
 
-  function move(e) {
-    if (moving) {
-      x += e.movementX
-      y -= e.movementY
-    }
-    //
-    else if (resizing) {
+  export let borders = false
+  export let expandable = true
+  export let resizable = true
+  export let minHeight = 100
+  export let minWidth = 100
+
+  // stored
+  export let x = 400
+  export let y = 200
+  export let width = 400
+  export let height = 300
+  export let expanded = false
+
+  // saving z-index when focus
+  const zIndexId = zIndexStore.register(id)
+  zIndexStore.listen(zIndexId, ({ zIndex: z }) => (zIndex = z))
+
+  // saving x,y... to another instances of same app
+  const edit = windowsStore.edit$(id)
+  const editSafe = windowsStore.editSafe$(id)
+  const transform = windowsStore.transform$(id)
+
+  editSafe({ x, y, width, height, expanded })
+
+  windowsStore.watch(id, newData => {
+    x = newData.x
+    y = newData.y
+  })
+
+  function moveAndResize(e) {
+    move(e.movementX, e.movementY)
+
+    if (resizing) {
       width += kw * e.movementX
       height -= kh * e.movementY
       x += kx * e.movementX
@@ -51,9 +70,15 @@
     }
   }
 
-  function r(_kw = 0, _kh = 0, _kx = 0, _ky = 0) {
+  function move(dx: number, dy: number) {
+    if (moving)
+      // saving into global store
+      transform(({ x, y }) => ({ x: x + dx, y: y - dy }))
+  }
+
+  function resize$(_kw = 0, _kh = 0, _kx = 0, _ky = 0) {
     return () => {
-      btf()
+      focus()
       resizing = resizable
       kw = _kw
       kh = _kh
@@ -62,12 +87,12 @@
     }
   }
 
-  function m() {
-    btf()
+  function allowMove() {
+    focus()
     moving = true
   }
 
-  function btf() {
+  function focus() {
     zIndexStore.focus(zIndexId)
   }
 
@@ -76,7 +101,7 @@
   }
 </script>
 
-<svelte:window on:mouseup={reset} on:mousemove={move} />
+<svelte:window on:mouseup={reset} on:mousemove={moveAndResize} />
 
 <div
   class="window animate__backOutDown {className}"
@@ -89,10 +114,10 @@
 		min-height: {minHeight}px;
     z-index: {zIndex};
   "
-  on:click={btf}
-  on:keyup={btf}
+  on:click={focus}
+  on:keyup={focus}
 >
-  <p class="window-tittle" on:mousedown={m} on:click={btf} on:keyup={btf}>{title}</p>
+  <p class="window-tittle" on:mousedown={allowMove} on:click={focus} on:keyup={focus}>{title}</p>
 
   <div class="window-controls">
     <button class="window-control" title="minimize">
@@ -105,7 +130,7 @@
       </button>
     {/if}
 
-    <button class="window-control" title="close" on:click={windowsStore.delete$(id)}>
+    <button class="window-control" title="close {id}" on:click={windowsStore.remove$(id)}>
       <Fa icon={faXmark} />
     </button>
   </div>
@@ -113,20 +138,21 @@
   <div class="window-content {borders}"><slot /></div>
 
   <slot name="window-footer">
-    <!-- <small>[ height: {height} ] </small> -->
+    <!-- <small>{id} [ {data?.x}, {data?.y} ] {data?.width}x{data?.height}</small> -->
+    <small>{id} [ x: {x}, y: {y} ]</small>
   </slot>
 
   <!-- resizers -->
   {#if resizable}
-    <button class="resizer top" on:mousedown={r(0, 1)} />
-    <button class="resizer bottom" on:mousedown={r(0, -1, 0, 1)} />
-    <button class="resizer left" on:mousedown={r(-1, 0, 1, 0)} />
-    <button class="resizer right" on:mousedown={r(1)} />
+    <button class="resizer top" on:mousedown={resize$(0, 1)} />
+    <button class="resizer bottom" on:mousedown={resize$(0, -1, 0, 1)} />
+    <button class="resizer left" on:mousedown={resize$(-1, 0, 1, 0)} />
+    <button class="resizer right" on:mousedown={resize$(1)} />
 
-    <button class="resizer top-left" on:mousedown={r(-1, 1, 1)} />
-    <button class="resizer top-right" on:mousedown={r(1, 1)} />
-    <button class="resizer bottom-left" on:mousedown={r(-1, -1, 1, 1)} />
-    <button class="resizer bottom-right" on:mousedown={r(1, -1, 0, 1)} />
+    <button class="resizer top-left" on:mousedown={resize$(-1, 1, 1)} />
+    <button class="resizer top-right" on:mousedown={resize$(1, 1)} />
+    <button class="resizer bottom-left" on:mousedown={resize$(-1, -1, 1, 1)} />
+    <button class="resizer bottom-right" on:mousedown={resize$(1, -1, 0, 1)} />
   {/if}
 </div>
 
