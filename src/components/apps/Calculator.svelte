@@ -73,7 +73,7 @@
   }
 </script>
 
-<Window title="Calculator" {id} expandable={false} x={200} y={300} height={285} minHeight={285} width={200} minWidth={200}>
+<Window title="Calculator" {id} maximizable={false} x={200} y={300} height={285} minHeight={285} width={200} minWidth={200}>
   <div class="calculator">
     <div class="calculator-display">
       <input class="calculator-entry" bind:value type="text" />

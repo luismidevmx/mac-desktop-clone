@@ -1,19 +1,38 @@
 <script lang="ts">
   // icons
   import calculator from '../assets/icons/Calculator.png'
-  import appStore from '../assets/icons/AppStore.png'
   import notes from '../assets/icons/Notes.png'
-  import safari from '../assets/icons/Safari.png'
+  // import appStore from '../assets/icons/AppStore.png'
+  // import safari from '../assets/icons/Safari.png'
 
   // stores
+  import type { IWindowInternal } from '../stores/windowsStore'
   import windows from '../stores/windowsStore'
 
-  const icons = [{ src: calculator, appName: 'Calculator' }, { src: notes, appName: 'Notepad' }, { src: appStore }, { src: safari }]
+  const icons = [
+    { src: calculator, appName: 'Calculator' },
+    { src: notes, appName: 'Notepad' }
+  ]
+
+  function openApp$(appName: string) {
+    const push = windows.push$(appName)
+    let lastInstance: IWindowInternal
+
+    windows.lastInstanceOff(appName).subscribe(x => (lastInstance = x))
+
+    return () => {
+      if (lastInstance) {
+        windows.edit(lastInstance.id, { minimized: !lastInstance.data.minimized })
+      } else {
+        push()
+      }
+    }
+  }
 </script>
 
-<div class="dock">
+<div class="dock" id="dock">
   {#each icons as { src, appName }}
-    <button class="dock-app" on:click={windows.push$(appName)}>
+    <button class="dock-app" on:click={openApp$(appName)}>
       <img {src} alt="icon from sass" />
     </button>
   {/each}

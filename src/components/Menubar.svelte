@@ -9,7 +9,7 @@
   setInterval(() => (date = format(Date.now(), 'ccc MMM dd  hh:mm a')), 1000)
 </script>
 
-<nav class="menubar">
+<nav class="menubar" id="menubar">
   <ul class="menubar-section">
     <li><Fa icon={faAppleWhole} /></li>
 

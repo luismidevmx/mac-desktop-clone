@@ -1,5 +1,5 @@
-import { writable } from 'svelte/store'
-import { remove, findIndex } from 'lodash'
+import { writable, derived } from 'svelte/store'
+import { findIndex, findLast } from 'lodash'
 import { generate as shortid } from 'shortid'
 
 export interface IWindowData {
@@ -8,6 +8,7 @@ export interface IWindowData {
   width?: number
   height?: number
   expanded?: boolean
+  minimized?: boolean
 }
 
 export interface IWindowBase {
@@ -19,12 +20,19 @@ export interface IWindowInternal extends IWindowBase {
   type: string
 }
 
+const data = { minimized: false }
+
 function createWindowsStore() {
   const { subscribe, set, update } = writable<IWindowInternal[]>([])
 
+  const lastInstanceOff = (type: string) =>
+    derived({ subscribe, set, update }, $arr => {
+      return findLast($arr, { type })
+    })
+
   const push$ = (type: string) => {
     if (type) {
-      return () => update(prev => [...prev, { type, id: shortid(), data: {} }])
+      return () => update(prev => [...prev, { type, id: shortid(), data }])
     }
 
     // undefined types trig nothing
@@ -79,12 +87,21 @@ function createWindowsStore() {
   const edit = (id: string, data: IWindowData) => transform(id, () => data)
   const editSafe = (id: string, data: IWindowData) => transform(id, prev => ({ ...data, ...prev }))
 
-  const remove$ = (id: string) => () => remove(id)
-  const edit$ = (id: string) => (data: IWindowData) => edit(id, data)
-  const editSafe$ = (id: string) => (data: IWindowData) => editSafe(id, data)
-  const transform$ = (id: string) => (transformItem: (data: IWindowData) => IWindowData) => transform(id, transformItem)
-
-  return { subscribe, set, update, push$, remove, remove$, edit$, edit, editSafe$, editSafe, transform$, watch }
+  return {
+    edit$: (id: string) => (data: IWindowData) => edit(id, data),
+    edit,
+    editSafe$: (id: string) => (data: IWindowData) => editSafe(id, data),
+    editSafe,
+    lastInstanceOff,
+    push$,
+    remove$: (id: string) => () => remove(id),
+    remove,
+    set,
+    subscribe,
+    transform$: (id: string) => (transformItem: (data: IWindowData) => IWindowData) => transform(id, transformItem),
+    update,
+    watch
+  }
 }
 
 const windowsStore = createWindowsStore()

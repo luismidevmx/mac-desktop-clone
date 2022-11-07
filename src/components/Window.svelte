@@ -2,91 +2,131 @@
   import { generate as shortid } from 'shortid'
   // icons
   import Fa from 'svelte-fa/src/fa.svelte'
-  import { faXmark, faMinus, faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons'
+  import { faXmark, faMinus, faExpand, faCompress } from '@fortawesome/free-solid-svg-icons'
 
   // stores
   import windowsStore from '../stores/windowsStore'
   import zIndexStore from '../stores/zIndexStore'
+  import { boolean } from 'mathjs'
+
+  type CssUnit = number | string
 
   // core variables
-  // prettier-ignore
-  let className = '', kh = 0, kw = 0, kx = 0, ky = 0, resizing = false, zIndex = 1, moving = false
+  let className = ''
+
+  // resizing factors
+  let kh = 0,
+    kw = 0,
+    kx = 0,
+    ky = 0
+
+  // resizing data
+  let resizing = false,
+    _resizable: boolean
+
+  // other
+  let zIndex = 1,
+    moving = false,
+    maximizedHeight: number,
+    maximizedBottom: number
 
   // params
   // "immutable"
   export let id = shortid()
   export let title = 'Program'
   export { className as class }
+  export let windowColor = '#fefefe'
 
   export let borders = false
-  export let expandable = true
+  export let maximizable = true
   export let resizable = true
-  export let minHeight = 100
-  export let minWidth = 100
+  export let minHeight = 150
+  export let minWidth = 220
 
   // stored
   export let x = 400
   export let y = 200
-  export let width = 400
-  export let height = 300
-  // export let expanded = false
+  export let width: CssUnit = 400
+  export let height: CssUnit = 300
+  export let maximized = false
+  export let minimized = false
 
   // saving z-index when focus
   const zIndexId = zIndexStore.register(id)
+  const edit = windowsStore.edit$(id)
+  _resizable = resizable
+
   zIndexStore.listen(zIndexId, ({ zIndex: z }) => (zIndex = z))
 
-  // // saving x,y... to another instances of same app
-  // const edit = windowsStore.edit$(id)
-  // const editSafe = windowsStore.editSafe$(id)
-  // const transform = windowsStore.transform$(id)
+  windowsStore.watch(id, changes => {
+    minimized = changes.minimized
+  })
 
-  // editSafe({ x, y, width, height, expanded })
+  function minimize() {
+    minimized = true
+    edit({ minimized })
+  }
 
-  // windowsStore.watch(id, newData => {
-  //   x = newData.x
-  //   y = newData.y
-  // })
+  function maximize() {
+    const dockHeight = (document.getElementById('dock')?.clientHeight ?? 0) + 20
+    const menubarHeight = document.getElementById('menubar')?.clientHeight ?? 0
+    const documentHeight = document.body.clientHeight
+
+    if (maximizable) {
+      maximized = true
+      resizable = false
+      maximizedHeight = documentHeight - dockHeight - menubarHeight
+      maximizedBottom = dockHeight
+    }
+  }
+
+  function compress() {
+    if (maximized) {
+      maximized = false
+      resizable = _resizable
+    }
+  }
 
   function refresh(e) {
     move(e.movementX, e.movementY)
+    resize(e.movementX, e.movementY)
+  }
 
-    if (resizing) {
-      width += kw * e.movementX
-      height -= kh * e.movementY
+  function resize(dw: number, dh: number, force = false) {
+    if (force || (!maximized && resizing)) {
+      ;(width as number) += kw * dw
+      ;(height as number) -= kh * dh
 
-      move(kx * e.movementX, ky * e.movementY)
+      // if resizing to top, makes the window smaller and increment its "Y" to stay at the same css-top
+      move(kx * dw, ky * dh, true)
 
       if (width < minWidth) {
-        // avoiding delay by pixels replacement
         width = minWidth
-        move(-kx * e.movementX, 0)
+        move(-kx * dw, 0, true)
       }
 
       if (height < minHeight) {
-        // avoiding delay by pixels replacement
         height = minHeight
-        move(0, -ky * e.movementY)
+        move(0, -ky * dh, true)
       }
     }
   }
 
-  function move(dx: number, dy: number) {
-    if (moving || resizing) {
+  function move(dx: number, dy: number, force = false) {
+    if (moving || force) {
       x += dx
       y -= dy
     }
-    // saving into global store
-    // transform(({ x, y }) => ({ x: x + dx, y: y - dy }))
   }
 
-  function resize$(_kw = 0, _kh = 0, _kx = 0, _ky = 0) {
+  function resize$(widthFactor = 0, heightFactor = 0, xFactor = 0, yFactor = 0) {
     return () => {
       focus()
       resizing = resizable
-      kw = _kw
-      kh = _kh
-      kx = _kx
-      ky = _ky
+      kw = widthFactor
+      kh = heightFactor
+      kx = xFactor
+      ky = yFactor
     }
   }
 
@@ -102,20 +142,32 @@
   function reset() {
     moving = resizing = false
   }
+
+  function refineCssUnit(unit: CssUnit) {
+    if (typeof unit === 'number' || /^\d+$/gi.test(unit)) {
+      return `${unit}px`
+    }
+
+    return unit
+  }
 </script>
 
 <svelte:window on:mouseup={reset} on:mousemove={refresh} />
 
 <div
-  class="window animate__backOutDown {className}"
+  class="window maximized-{maximized} minimized-{minimized}"
   style="
-		bottom: {y}px;
-		left: {x}px;
-		width: {width}px;
-		height: {height}px;
-		min-width: {minWidth}px;
-		min-height: {minHeight}px;
-    z-index: {zIndex};
+		--bottom: {refineCssUnit(y)};
+		--left: {refineCssUnit(x)};
+		--width: {refineCssUnit(width)};
+		--height: {refineCssUnit(height)};
+		--min-width: {refineCssUnit(minWidth)};
+		--min-height: {refineCssUnit(minHeight)};
+    --z-index: {zIndex};
+    --window-color: {windowColor};
+    
+    --maximized-height: {refineCssUnit(maximizedHeight)};
+    --maximized-bottom: {refineCssUnit(maximizedBottom)};
   "
   on:click={focus}
   on:keyup={focus}
@@ -123,14 +175,20 @@
   <p class="window-tittle" on:mousedown={allowMove} on:click={focus} on:keyup={focus}>{title}</p>
 
   <div class="window-controls">
-    <button class="window-control" title="minimize">
+    <button class="window-control" title="minimize" on:click={minimize}>
       <Fa icon={faMinus} />
     </button>
 
-    {#if expandable}
-      <button class="window-control" title="maximize">
-        <Fa icon={faUpRightAndDownLeftFromCenter} />
-      </button>
+    {#if maximizable}
+      {#if maximized}
+        <button class="window-control" title="compress" on:click={compress}>
+          <Fa icon={faCompress} />
+        </button>
+      {:else}
+        <button class="window-control" title="maximize" on:click={maximize}>
+          <Fa icon={faExpand} />
+        </button>
+      {/if}
     {/if}
 
     <button class="window-control" title="close" on:click={windowsStore.remove$(id)}>
@@ -138,7 +196,7 @@
     </button>
   </div>
 
-  <div class="window-content {borders}"><slot /></div>
+  <div class="window-content {className} borders-{borders}"><slot /></div>
 
   <slot name="window-footer">
     <!-- <small>{id} [ x: {x}, y: {y} ]</small> -->
@@ -163,24 +221,52 @@
   // @gray-2: #f3f0f3;
   // @controls-diameter: 10px;
   @resizer-border-width: 6px;
+  @window-color: var(--window-color);
+  @time: 0.3s;
 
   // computed
   @b: @resizer-border-width;
   @b_2: -(@b / 2);
 
   .window {
-    background: #fefefe;
+    background: @window-color;
     border-radius: 3px;
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
     position: absolute;
     user-select: none;
-    z-index: 50;
     overflow: hidden;
+    // transition: transform @time;
+    z-index: var(--z-index);
 
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto 1fr auto;
     grid-auto-rows: auto;
+
+    animation: backInUp @time;
+
+    &.maximized-false {
+      bottom: var(--bottom);
+      left: var(--left);
+      width: var(--width);
+      height: var(--height);
+      min-width: var(--min-width);
+      min-height: var(--min-height);
+    }
+
+    &.minimized-true {
+      animation: backOutDown @time forwards;
+    }
+
+    &.maximized-true {
+      width: 100vw;
+      height: var(--maximized-height);
+      bottom: var(--maximized-bottom);
+    }
+
+    &.minimized-true.maximized-false {
+      left: var(--left);
+    }
 
     &-tittle,
     &-controls,
@@ -191,6 +277,7 @@
 
     &-content {
       grid-column: 1 / -1;
+      overflow: auto;
     }
 
     &-control {
