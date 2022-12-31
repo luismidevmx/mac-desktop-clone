@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import { findIndex, sortBy } from 'lodash'
+import { findIndex, sortBy } from 'lodash-es'
 import { generate as shortid } from 'shortid'
 
 interface IZIndex {

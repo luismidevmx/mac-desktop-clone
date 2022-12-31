@@ -7,7 +7,6 @@
   // stores
   import windowsStore from '../stores/windowsStore'
   import zIndexStore from '../stores/zIndexStore'
-  import { boolean } from 'mathjs'
 
   type CssUnit = number | string
 
@@ -36,6 +35,7 @@
   export let title = 'Program'
   export { className as class }
   export let windowColor = '#fefefe'
+  export let fontColor = '#212121'
 
   export let borders = false
   export let maximizable = true
@@ -155,6 +155,7 @@
 <svelte:window on:mouseup={reset} on:mousemove={refresh} />
 
 <div
+  id="window-{id}"
   class="window maximized-{maximized} minimized-{minimized}"
   style="
 		--bottom: {refineCssUnit(y)};
@@ -165,6 +166,7 @@
 		--min-height: {refineCssUnit(minHeight)};
     --z-index: {zIndex};
     --window-color: {windowColor};
+    --font-color: {fontColor};
     
     --maximized-height: {refineCssUnit(maximizedHeight)};
     --maximized-bottom: {refineCssUnit(maximizedBottom)};
@@ -198,7 +200,7 @@
 
   <div class="window-content {className} borders-{borders}"><slot /></div>
 
-  <slot name="window-footer">
+  <slot name="window-footer" class="window-footer">
     <!-- <small>{id} [ x: {x}, y: {y} ]</small> -->
   </slot>
 
@@ -222,6 +224,7 @@
   // @controls-diameter: 10px;
   @resizer-border-width: 6px;
   @window-color: var(--window-color);
+  @font-color: var(--font-color);
   @time: 0.3s;
 
   // computed
@@ -232,6 +235,7 @@
     background: @window-color;
     border-radius: 3px;
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
+    color: @font-color;
     position: absolute;
     user-select: none;
     overflow: hidden;
@@ -253,15 +257,14 @@
       min-width: var(--min-width);
       min-height: var(--min-height);
     }
-
-    &.minimized-true {
-      animation: backOutDown @time forwards;
-    }
-
     &.maximized-true {
       width: 100vw;
       height: var(--maximized-height);
       bottom: var(--maximized-bottom);
+    }
+
+    &.minimized-true {
+      animation: backOutDown @time forwards;
     }
 
     &.minimized-true.maximized-false {
@@ -286,6 +289,7 @@
       padding: 0;
       cursor: pointer;
       margin-left: 0.8em;
+      color: @font-color;
     }
 
     &-footer {

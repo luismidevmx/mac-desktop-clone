@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store'
-import { findIndex, findLast } from 'lodash'
+import { findIndex, findLast } from 'lodash-es'
 import { generate as shortid } from 'shortid'
 
 export interface IWindowData {

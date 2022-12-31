@@ -3,13 +3,15 @@
   import windows from '../stores/windowsStore'
 
   // windows
-  import Window from './Window.svelte'
+  // import Window from './Window.svelte'
   import Calculator from './apps/Calculator.svelte'
   import Notepad from './apps/Notepad.svelte'
+  import VSCode from './apps/VSCode.svelte'
 
   const windowComponents = {
     Calculator,
-    Notepad
+    Notepad,
+    VSCode
   }
 </script>
 

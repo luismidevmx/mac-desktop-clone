@@ -1,17 +1,20 @@
 <script lang="ts">
+  import type { IWindowInternal } from '../stores/windowsStore'
+
   // icons
   import calculator from '../assets/icons/Calculator.png'
   import notes from '../assets/icons/Notes.png'
+  import vscode from '../assets/icons/VSCode.png'
   // import appStore from '../assets/icons/AppStore.png'
   // import safari from '../assets/icons/Safari.png'
 
   // stores
-  import type { IWindowInternal } from '../stores/windowsStore'
   import windows from '../stores/windowsStore'
 
   const icons = [
     { src: calculator, appName: 'Calculator' },
-    { src: notes, appName: 'Notepad' }
+    { src: notes, appName: 'Notepad' },
+    { src: vscode, appName: 'VSCode' }
   ]
 
   function openApp$(appName: string) {

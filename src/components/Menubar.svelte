@@ -16,6 +16,7 @@
     <li><a href="https://github.com/LuisOlive/mac-desktop-clone" {...aa}>Code</a></li>
     <li><a href="https://github.com/LuisOlive?tab=repositories" {...aa}>Repos</a></li>
     <li><a href="https://github.com/LuisOlive" {...aa}>Author</a></li>
+    <li><a href="https://fontawesome.com/search?o=r&m=free" {...aa}>Icons</a></li>
     <!-- <li><a href="#" target="_blank">More projects</a></li>
     <li><a href="#" target="_blank">Donate</a></li>  -->
   </ul>

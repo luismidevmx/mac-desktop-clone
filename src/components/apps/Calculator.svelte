@@ -12,15 +12,6 @@
   let value = ''
   let writting = false
 
-  // let data = {
-  //   x: 200,
-  //   y: 300,
-  //   height: 285,
-  //   minHeight: 285,
-  //   width: 200,
-  //   minWidth: 200
-  // }
-
   // methods
   function addChar(char: string) {
     switch (int(char)) {
@@ -73,7 +64,17 @@
   }
 </script>
 
-<Window title="Calculator" {id} maximizable={false} x={200} y={300} height={285} minHeight={285} width={200} minWidth={200}>
+<Window
+  title="Calculator"
+  {id}
+  maximizable={false}
+  x={200}
+  y={300}
+  height={285}
+  minHeight={285}
+  width={200}
+  minWidth={200}
+>
   <div class="calculator">
     <div class="calculator-display">
       <input class="calculator-entry" bind:value type="text" />

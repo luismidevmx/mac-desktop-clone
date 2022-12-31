@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import { findIndex } from 'lodash'
+import { findIndex } from 'lodash-es'
 
 /**
  * TODO: rename this sh1ts
