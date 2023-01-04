@@ -2,11 +2,11 @@
   import type { IWindowInternal } from '../stores/windowsStore'
 
   // icons
-  import calculator from '../assets/icons/Calculator.png'
-  import notes from '../assets/icons/Notes.png'
-  import vscode from '../assets/icons/VSCode.png'
-  // import appStore from '../assets/icons/AppStore.png'
-  // import safari from '../assets/icons/Safari.png'
+  import calculator from '../assets/icons/Calculator.png?w=100&h=100&webp'
+  import notes from '../assets/icons/Notes.png?w=100&h=100&webp'
+  import vscode from '../assets/icons/VSCode.png?w=100&h=100&webp'
+  // import appStore from '../assets/icons/AppStore.png?w=100&h=100&webp'
+  // import safari from '../assets/icons/Safari.png?w=100&h=100&webp'
 
   // stores
   import windows from '../stores/windowsStore'

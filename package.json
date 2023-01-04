@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "pnpx vite",
-    "dev": "pnpx vite",
-    "build": "pnpx vite build",
-    "preview": "pnpx vite preview",
-    "check": "pnpx svelte-check --tsconfig ./tsconfig.json"
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.1.0",
@@ -42,11 +43,12 @@
     "lodash-es": "^4.17.21",
     "mathjs": "^11.3.2",
     "normalize.css": "^8.0.1",
-    "prismjs": "^1.29.0",
     "quill": "^1.3.7",
+    "rollup-plugin-imagetools": "^3.0.13",
     "shortid": "^2.2.16",
     "style-object-to-css-string": "^1.0.1",
-    "svelte-fa": "^3.0.3"
+    "svelte-fa": "^3.0.3",
+    "vite-imagetools": "^4.0.13"
   },
   "homepage": "https://sweet-torrone-cef76c.netlify.app/"
 }

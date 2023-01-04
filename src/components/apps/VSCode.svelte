@@ -11,9 +11,9 @@
   import { faMagnifyingGlass, faCodeBranch, faBugSlash, faShapes } from '@fortawesome/free-solid-svg-icons'
 
   // syntax highlighting
-  import { EditorView, basicSetup } from 'codemirror'
-  import { oneDark } from '@codemirror/theme-one-dark'
-  import { javascript } from '@codemirror/lang-javascript'
+  // import { EditorView, basicSetup } from 'codemirror'
+  // import { oneDark } from '@codemirror/theme-one-dark'
+  // import { javascript } from '@codemirror/lang-javascript'
 
   export let id: string
   let editor: HTMLDivElement
@@ -37,7 +37,11 @@ onMount(() => {
 })
 `
 
-  onMount(() => {
+  onMount(async () => {
+    const { EditorView, basicSetup } = await import('codemirror')
+    const { oneDark } = await import('@codemirror/theme-one-dark')
+    const { javascript } = await import('@codemirror/lang-javascript')
+
     new EditorView({
       parent: editor,
       doc,
