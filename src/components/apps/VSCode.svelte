@@ -10,27 +10,20 @@
   import { faCopy } from '@fortawesome/free-regular-svg-icons'
   import { faMagnifyingGlass, faCodeBranch, faBugSlash, faShapes } from '@fortawesome/free-solid-svg-icons'
 
-  // syntax highlighting
-  // import { EditorView, basicSetup } from 'codemirror'
-  // import { oneDark } from '@codemirror/theme-one-dark'
-  // import { javascript } from '@codemirror/lang-javascript'
-
   export let id: string
   let editor: HTMLDivElement
 
   const icons = [faCopy, faMagnifyingGlass, faCodeBranch, faBugSlash, faShapes]
 
-  const doc = `import { onMount } from 'svelte'
-import { EditorView, basicSetup } from 'codemirror'
-import { oneDark } from '@codemirror/theme-one-dark'
-import { javascript } from '@codemirror/lang-javascript'
+  const doc = `onMount(async () => {
+  const { EditorView, basicSetup } = await import('codemirror')
+  const { oneDark } = await import('@codemirror/theme-one-dark')
+  const { javascript } = await import('@codemirror/lang-javascript')
 
-let editor // dom
-
-onMount(() => {
   new EditorView({
     parent: editor,
-    doc: 'console.log("hello, world")',
+    doc,
+    // doc: "console.log('hello')",
     // @ts-ignore
     extensions: [javascript(), ...basicSetup, oneDark] // solved a big migraine!
   })

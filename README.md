@@ -2,9 +2,11 @@
 
 It's a copy of a mac-os desktop, but for the web!
 
-This is an artistic project of a clone of a mac desktop windows system ans some little functional apps using svelte + vite
+This is an artistic project of a clone of a mac desktop windows system ans some little functional apps using svelte +
+vite
 
-live demo on [Mac desktop clone (luisolive.github.io/mac-desktop-clone/)](https://luisolive.github.io/mac-desktop-clone/)
+live demo on
+[Mac desktop clone (luisolive.github.io/mac-desktop-clone/)](https://luisolive.github.io/mac-desktop-clone/)
 
 ![project preview](preview.jpg)
 
@@ -24,3 +26,5 @@ next adjusts and desired:
 
 - [ ] Assets optimization
 - [ ] Responsive desktop
+- [ ] Add keyboard shortcuts
+- [ ] Add dock animations

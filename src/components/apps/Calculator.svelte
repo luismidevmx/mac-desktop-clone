@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import Window from '../Window.svelte'
-  import { evaluate } from 'mathjs'
 
   // params
   export let id: string
@@ -11,6 +11,13 @@
   let result = 0
   let value = ''
   let writting = false
+
+  let evaluate: Function
+  $: _calc = (value: string) => evaluate(value.split('÷').join('/').split('⨯').join('*'))
+
+  onMount(async () => {
+    evaluate = (await import('mathjs')).evaluate
+  })
 
   // methods
   function addChar(char: string) {
@@ -46,7 +53,7 @@
 
   function calc() {
     try {
-      result = evaluate(value.split('÷').join('/').split('⨯').join('*'))
+      result = _calc(value)
       isError = ''
       //
     } catch (e) {
