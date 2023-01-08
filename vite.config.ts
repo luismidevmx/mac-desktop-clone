@@ -6,5 +6,5 @@ import { evaluate } from 'mathjs' // TODO: OPTIMIZE CALCULATOR
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [svelte(), imagetools()],
-  base: '/mac-desktop-clone/'
+  // base: '/mac-desktop-clone/'
 })

@@ -6,7 +6,7 @@ This is an artistic project of a clone of a mac desktop windows system ans some 
 vite
 
 live demo on
-[Mac desktop clone (luisolive.github.io/mac-desktop-clone/)](https://luisolive.github.io/mac-desktop-clone/)
+[Mac desktop clone](https://sweet-torrone-cef76c.netlify.app/)
 
 ![project preview](preview.jpg)
 
@@ -24,7 +24,7 @@ apps deployed and desired:
 
 next adjusts and desired:
 
-- [ ] Assets optimization
+- [x] Assets optimization *
 - [ ] Responsive desktop
 - [ ] Add keyboard shortcuts
 - [ ] Add dock animations
