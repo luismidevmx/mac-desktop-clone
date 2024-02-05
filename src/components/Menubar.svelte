@@ -25,10 +25,8 @@
 </nav>
 
 <style lang="less">
-  @import '../variables.less';
-
   .menubar {
-    background: @dock;
+    background: rgba(#fdfdfd, .6);
     display: flex;
     font-size: 12px;
     justify-content: space-between;

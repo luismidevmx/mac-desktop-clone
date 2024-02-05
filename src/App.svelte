@@ -1,6 +1,6 @@
 <script lang="ts">
   // background image
-  import src from './assets/bg.jpg?w=3840&h=2160&webp'
+  import src from './assets/macos-sierra-mountain.jpg?w=3840&h=2160&webp'
 
   // components
   import Windows from './components/Windows.svelte'

@@ -6,11 +6,13 @@
   // import Window from './Window.svelte'
   import Calculator from './apps/Calculator.svelte'
   import Notepad from './apps/Notepad.svelte'
+  import TicTacToe from './apps/TicTacToe.svelte'
   import VSCode from './apps/VSCode.svelte'
 
   const windowComponents = {
     Calculator,
     Notepad,
+    TicTacToe,
     VSCode
   }
 </script>

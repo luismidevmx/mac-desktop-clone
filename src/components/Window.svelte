@@ -174,35 +174,40 @@
   on:click={focus}
   on:keyup={focus}
 >
-  <p class="window-tittle" on:mousedown={allowMove} on:click={focus} on:keyup={focus}>{title}</p>
-
-  <div class="window-controls">
-    <button class="window-control" title="minimize" on:click={minimize}>
-      <Fa icon={faMinus} />
-    </button>
-
-    {#if maximizable}
-      {#if maximized}
-        <button class="window-control" title="compress" on:click={compress}>
-          <Fa icon={faCompress} />
-        </button>
-      {:else}
-        <button class="window-control" title="maximize" on:click={maximize}>
-          <Fa icon={faExpand} />
-        </button>
+  <div class="window-header">
+    <p class="window-tittle" on:mousedown={allowMove} on:click={focus} on:keyup={focus}>{title}</p>
+    <div class="window-controls">
+      <button class="window-control window-control-minimize" title="minimize" on:click={minimize}>
+        <Fa icon={faMinus} />
+      </button>
+      {#if maximizable}
+        {#if maximized}
+          <button class="window-control window-control-compress" title="compress" on:click={compress}>
+            <Fa icon={faCompress} />
+          </button>
+        {:else}
+          <button class="window-control window-control-maximize" title="maximize" on:click={maximize}>
+            <Fa icon={faExpand} />
+          </button>
+        {/if}
       {/if}
-    {/if}
-
-    <button class="window-control" title="close" on:click={windowsStore.remove$(id)}>
-      <Fa icon={faXmark} />
-    </button>
+      <button class="window-control window-control-close" title="close" on:click={windowsStore.remove$(id)}>
+        <Fa icon={faXmark} />
+      </button>
+    </div>
+  </div>
+  
+  <div class="window-menubar">
+    <slot name="window-menubar" />
   </div>
 
-  <div class="window-content {className} borders-{borders}"><slot /></div>
-
-  <slot name="window-footer" class="window-footer">
-    <!-- <small>{id} [ x: {x}, y: {y} ]</small> -->
-  </slot>
+  <div class="window-content borders-{borders} {className}">
+    <slot />
+  </div>
+  
+  <div class="window-footer">
+    <slot name="window-footer" class="window-footer"/>
+  </div>
 
   <!-- resizers -->
   {#if resizable}
@@ -218,7 +223,7 @@
   {/if}
 </div>
 
-<style lang="less">
+<style lang="less" global>
   // @gray-1: #e8e7ea;
   // @gray-2: #f3f0f3;
   // @controls-diameter: 10px;
@@ -232,6 +237,8 @@
   @b_2: -(@b / 2);
 
   .window {
+    --window-gap: .3em;
+    
     background: @window-color;
     border-radius: 3px;
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
@@ -239,13 +246,12 @@
     position: absolute;
     user-select: none;
     overflow: hidden;
-    // transition: transform @time;
     z-index: var(--z-index);
 
     display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto 1fr auto;
-    grid-auto-rows: auto;
+    grid-template-rows: 1fr 150px;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--window-gap);
 
     animation: backInUp @time;
 
@@ -262,25 +268,32 @@
       height: var(--maximized-height);
       bottom: var(--maximized-bottom);
     }
-
     &.minimized-true {
       animation: backOutDown @time forwards;
     }
-
     &.minimized-true.maximized-false {
       left: var(--left);
     }
-
-    &-tittle,
-    &-controls,
-    &-footer,
-    &-content.true {
-      padding: 1em;
+      
+    &-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: .3em 1em 0;
+    }
+    
+    &-tittle {
+      font-size: .9em;
     }
 
     &-content {
-      grid-column: 1 / -1;
       overflow: auto;
+      display: grid;
+      grid-template-rows: 1fr;
+      
+      &.borders-true {
+        padding: .45em 1em;
+      }
     }
 
     &-control {
@@ -293,8 +306,26 @@
     }
 
     &-footer {
-      grid-column: 1 / -1;
       text-align: right;
+    }
+    
+    &-menubar {
+      padding: 0 1em;
+      display: flex;
+      gap: .4em;
+      
+      button,
+      
+      .menubar-option {
+        background: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: .7em;
+        color: @font-color;
+        margin: 0;
+        display: block;
+      }
     }
   }
 

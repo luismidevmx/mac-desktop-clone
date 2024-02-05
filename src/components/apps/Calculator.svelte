@@ -77,8 +77,8 @@
   maximizable={false}
   x={200}
   y={300}
-  height={285}
-  minHeight={285}
+  height={270}
+  minHeight={270}
   width={200}
   minWidth={200}
 >

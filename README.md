@@ -1,20 +1,33 @@
 # Mac desktop clone
 
-It's a copy of a mac-os desktop, but for the web!
+An artistic project of a clone of a mac desktop windows system ans some little functional apps using Svelte + Vite.
 
-This is an artistic project of a clone of a mac desktop windows system ans some little functional apps using svelte +
-vite
-
-live demo on
-[Mac desktop clone](https://sweet-torrone-cef76c.netlify.app/)
+live demo [right here.](https://sweet-torrone-cef76c.netlify.app/)
 
 ![project preview](preview.jpg)
 
-apps deployed and desired:
+## New Version Features
 
-- [x] Calculator
-- [x] Notepad
-- [x] Code editor
+* Migrated to Svelte 4.
+* Added Tic Tac Toe app.
+* Dock now has the traditional Wave/Gauss Bell effect.
+* Better icons and background.
+
+## Features
+
+- Apps *"drag n' drop"* resizing, moving and expanding.
+- All apps work at least in the basics.
+- Date and hour indication.
+- Pretty animations and icons.
+
+## Applications
+
+Available and meant.
+
+- [x] **Calculator:** Basic calculations and functions, free of JS-attack. Powered by math.js
+- [x] **Notepad:** Powered by Quill.
+- [x] **Code editor:** Inspirated on Visual Studio Code. Powered by Codemirror.
+- [x] **Tic Tac Toe:** Playable with scores.
 - [ ] Music Player
 - [ ] Video Player
 - [ ] File explorer
@@ -22,9 +35,10 @@ apps deployed and desired:
 - [ ] Paint
 - [ ] Calendar
 
-next adjusts and desired:
+## Meant features and adjusts
 
-- [x] Assets optimization *
-- [ ] Responsive desktop
-- [ ] Add keyboard shortcuts
-- [ ] Add dock animations
+- [x] Assets optimization. *
+- [ ] Responsive desktop.
+- [ ] Add keyboard shortcuts.
+- [ ] Better window animations.
+- [ ] More than an instance of every app.

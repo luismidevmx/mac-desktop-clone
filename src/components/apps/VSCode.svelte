@@ -15,15 +15,18 @@
 
   const icons = [faCopy, faMagnifyingGlass, faCodeBranch, faBugSlash, faShapes]
 
-  const doc = `onMount(async () => {
+  const doc = `import { onMount } from 'svelte'
+
+let editor: HTMLDivElement
+  
+onMount(async () => {
   const { EditorView, basicSetup } = await import('codemirror')
   const { oneDark } = await import('@codemirror/theme-one-dark')
   const { javascript } = await import('@codemirror/lang-javascript')
 
   new EditorView({
     parent: editor,
-    doc,
-    // doc: "console.log('hello')",
+    doc: 'console.log("hello")',
     // @ts-ignore
     extensions: [javascript(), ...basicSetup, oneDark] // solved a big migraine!
   })

@@ -1,11 +1,17 @@
 @font-face {
   font-family: red-hat;
-  src: url('/Red_Hat_Text/RedHatText-VariableFont_wght.ttf') format('truetype');
+  src: url('/RedHatText-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: red-hat-italic;
+  src: url('/RedHatText-Italic-VariableFont_wght.ttf') format('truetype');
 }
 
 * {
   outline: none;
-  font-family: red-hat, times, arial;
+  font-family: red-hat, times;
+  /* font-family: red-hat, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
   margin: 0;
   padding: 0;
   box-sizing: border-box;
