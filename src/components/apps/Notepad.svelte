@@ -1,82 +1,87 @@
 <script lang="ts">
-  import type Quill from 'quill'
   import { onMount } from 'svelte'
 
   import 'quill/dist/quill.snow.css'
 
   import Window from '../Window.svelte'
 
-  let editor: HTMLDivElement
-  let height = 350
-  let maximized = false
-  let windowEl: HTMLElement
+  let height = $state(350)
+  let maximized = $state(false)
 
-  export let id: string
-  export let quill: Quill = null
-
-  $: h = maximized
-    ? 'var(--maximized-height)'
-    : `${height - clientHeight('.window-tittle') - clientHeight('.ql-toolbar') - clientHeight('.window-footer')}px`
-  // $: console.log(windowEl?.clientHeight, height, maximized)
-
-  function _$(cssSelector: string) {
-    return windowEl?.querySelector?.(cssSelector)
-  }
-
-  function clientHeight(cssSelector: string) {
-    return _$(cssSelector)?.clientHeight ?? 0
-  }
+  let { id, quill } = $props()
 
   onMount(async () => {
     const { default: Quill } = await import('quill')
 
-    windowEl = document.getElementById(`window-${id}`)
-
-    quill = new Quill(editor, {
-      modules: {
-        toolbar: [
-          [{ font: [] }],
-          [{ header: 1 }, { header: 2 }], // custom button values
-
-          ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-          [{ align: [] }],
-          [{ color: [] }, { background: [] }, 'clean'],
-
-          [{ list: 'ordered' }, { list: 'bullet' }]
-        ]
-      },
+    quill = new Quill(`#${id}-editor`, {
       theme: 'snow',
-      placeholder: 'Write your story...'
+      placeholder: 'Write your story...',
+      modules: {
+        toolbar: `#${id}-toolbar`
+      }
     })
   })
 </script>
 
-<Window class="notepad" title="Notepad" bind:height bind:maximized width={570} x={500} y={160} minWidth={570} {id}>
-  <div class="notepad-editor" bind:this={editor} style="--h: {h}" />
+<Window class="notepad" title="Notepad" bind:height bind:maximized width={680} x={500} y={220} minWidth={680} {id}>
+  <div class="notepad-container">
+    <div id="{id}-toolbar">
+      <select class="ql-size"></select>
 
-  <!-- <div slot="window-footer">
-    [maximized: {maximized}, windowEl?.clientHeight: {windowEl?.clientHeight}px], style="--h: {h}"
-  </div> -->
+      <button class="ql-align"></button>
+      <button class="ql-align" value="center"></button>
+      <button class="ql-align" value="right"></button>
+      <button class="ql-align" value="justify"></button>
+
+      <button class="ql-bold"></button>
+      <button class="ql-italic"></button>
+      <button class="ql-underline"></button>
+      <button class="ql-strike"></button>
+
+      <button class="ql-script" value="sub"></button>
+      <button class="ql-script" value="super"></button>
+
+      <select class="ql-color"></select>
+      <select class="ql-background"></select>
+      <button class="ql-clean"></button>
+
+      <button class="ql-list" value="ordered"></button>
+      <button class="ql-list" value="bullet"></button>
+
+      <button class="ql-link"></button>
+      <button class="ql-image"></button>
+      <button class="ql-video"></button>
+    </div>
+    <div id="{id}-editor"></div>
+  </div>
 </Window>
 
 <style lang="less" global>
   .notepad {
+    --window-content-overflow: hidden;
+
     padding: 0;
 
-    &.window-content {
-      overflow: hidden;
+    .notepad-container {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: var(--height);
     }
 
     .ql-toolbar {
-      position: sticky;
       border: none;
       box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10000;
+      background: var(--window-color);
     }
 
-    .ql-container {
+    .ql-editor {
+      padding: 1em;
       overflow: auto;
-      min-height: 100px;
-      height: var(--h);
+      height: calc(var(--dynamic-height) - 80px);
+      position: relative;
     }
   }
 </style>

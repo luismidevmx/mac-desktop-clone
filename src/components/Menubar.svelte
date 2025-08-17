@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
   import { faAppleWhole } from '@fortawesome/free-solid-svg-icons'
   import { format } from 'date-fns'
   const aa = { target: '_blank', rel: 'noopener noreferrer' }
 
-  let date = format(Date.now(), 'ccc MMM dd kk:mm a')
+  let date = $state(format(Date.now(), 'ccc MMM dd kk:mm a'))
 
   setInterval(() => (date = format(Date.now(), 'ccc MMM dd  hh:mm a')), 1000)
 </script>
@@ -17,6 +17,7 @@
     <li><a href="https://github.com/luismidevmx?tab=repositories" {...aa}>Repos</a></li>
     <li><a href="https://github.com/luismidevmx" {...aa}>Author</a></li>
     <li><a href="https://fontawesome.com/search?o=r&m=free" {...aa}>Icons</a></li>
+    <li><a href="https://macosicons.com/" {...aa}>MacOS Icons</a></li>
     <!-- <li><a href="#" target="_blank">More projects</a></li>
     <li><a href="#" target="_blank">Donate</a></li>  -->
   </ul>
@@ -26,7 +27,7 @@
 
 <style lang="less">
   .menubar {
-    background: rgba(#fdfdfd, .6);
+    background: rgba(#fdfdfd, 0.6);
     display: flex;
     font-size: 12px;
     justify-content: space-between;

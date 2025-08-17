@@ -1,6 +1,5 @@
 import { writable, derived } from 'svelte/store'
 import { findIndex, findLast } from 'lodash-es'
-import { generate as shortid } from 'shortid'
 
 export interface IWindowData {
   x?: number
@@ -23,6 +22,8 @@ export interface IWindowInternal extends IWindowBase {
 const data = { minimized: false }
 
 function createWindowsStore() {
+  alert('SOOO DEPRECATED')
+
   const { subscribe, set, update } = writable<IWindowInternal[]>([])
 
   const lastInstanceOff = (type: string) =>
@@ -32,7 +33,7 @@ function createWindowsStore() {
 
   const push$ = (type: string) => {
     if (type) {
-      return () => update(prev => [...prev, { type, id: shortid(), data }])
+      return () => update(prev => [...prev, { type, id: 'shortid()', data }])
     }
 
     // undefined types trig nothing
@@ -72,6 +73,7 @@ function createWindowsStore() {
 
   const remove = (id: string) =>
     update(prev => {
+      alert('still using obsolete remove method')
       // find existent data id
       const i = findIndex(prev, { id })
 

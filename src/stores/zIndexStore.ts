@@ -8,6 +8,8 @@ interface IZIndex {
 }
 
 function createZIndexStore() {
+  alert('SOOO DEPRECATED')
+
   const { subscribe, set, update } = writable<IZIndex[]>([])
   let max = 1000
 

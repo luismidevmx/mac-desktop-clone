@@ -1,50 +1,67 @@
 <script lang="ts">
+  import { min } from 'lodash-es'
   import { onMount } from 'svelte'
   import Window from '../Window.svelte'
 
-  // params
-  export let id: string
+  let { id } = $props()
 
   // core variables
   const chars = 'C()÷789⨯456-123+0.←='.split('')
-  let isError = ''
-  let result = 0
-  let value = ''
-  let writting = false
+
+  let isError = $state('')
+  let result = $state<string | number>('')
+  let writting = $state(false)
+  let inputEl = $state<HTMLInputElement>()
+  let value = $state('')
+  let caretLoc = $state(0)
 
   let evaluate: Function
-  $: _calc = (value: string) => evaluate(value.split('÷').join('/').split('⨯').join('*'))
+  let format: Function
+  let evaluation = $derived(value.replaceAll('÷', '/').replaceAll('⨯', '*'))
 
   onMount(async () => {
-    evaluate = (await import('mathjs')).evaluate
+    const math = await import('mathjs')
+    evaluate = math.evaluate
+    format = (expr: string) => math.format(expr, { notation: 'auto', precision: 12, lowerExp: -7, upperExp: 9 })
   })
 
-  // methods
   function addChar(char: string) {
-    switch (int(char)) {
-      case 67: // clear
-        return clear
-
-      case 8592: // delete one char
-        return () => {
-          value = value.slice(0, value.length - 1)
-          calc()
-        }
-
-      case 61: // equal
-        return () => {
-          writting = false
-          calc()
-        }
-    }
-
     return () => {
-      writting = true
-      value += char
+      const before = value.slice(0, caretLoc) ?? ''
+      const after = value.slice(caretLoc) ?? ''
 
-      // auto calculate
+      writting = true
+      value = processChar(before, after, char)
+
+      if (int(char) !== 8592) {
+        caretLoc = min([caretLoc + char.length, value.length]) ?? 0
+      } else {
+        caretLoc--
+      }
+
       calc()
     }
+  }
+
+  function processChar(before: string, after: string, char: string) {
+    switch (int(char)) {
+      case 67: // clear
+        clear()
+        return ''
+
+      case 8592: // delete one char
+        return before.slice(0, -1) + after
+
+      case 61: // equal
+        writting = false
+        return before + after
+    }
+
+    return before + char + after
+  }
+
+  function refreshCaret() {
+    caretLoc = inputEl?.selectionStart ?? 0
   }
 
   function int(char: string) {
@@ -53,14 +70,30 @@
 
   function calc() {
     try {
-      result = _calc(value)
+      result = evaluate(evaluation)
       isError = ''
-      //
-    } catch (e) {
-      if (writting) return
+      writting = false
+      // console.log(evaluation, result)
+      if (result === undefined || result === 'undefined') {
+        result = 0
+      }
 
-      result = e.message.split(' (char')[0]
+      result = format(result)
+
+      if (result?.toString().startsWith('function')) {
+        result = `Function: ${value}(x)`
+      }
+      //
+    } catch (e: any) {
+      if (writting) return
+      result = e?.message?.split(' (char')?.[0] ?? 0
+
+      if (result?.toString()?.startsWith('Unexpected end of expression')) {
+        result = evaluation
+      }
+
       isError = 'is-error'
+      // console.log(e)
     }
   }
 
@@ -71,30 +104,23 @@
   }
 </script>
 
-<Window
-  title="Calculator"
-  {id}
-  maximizable={false}
-  x={200}
-  y={300}
-  height={270}
-  minHeight={270}
-  width={200}
-  minWidth={200}
->
+<Window title="Calculator" {id} maximizable={false} x={200} y={300} height={270} minHeight={270} width={200} minWidth={200}>
   <div class="calculator">
     <div class="calculator-display">
-      <input class="calculator-entry" bind:value type="text" />
+      <input class="calculator-entry" bind:this={inputEl} bind:value type="text" oninput={calc} onclick={refreshCaret} onselect={refreshCaret} onkeyup={refreshCaret} />
       <p class="calculator-result {isError}">{result}</p>
     </div>
 
     {#each chars as c}
-      <button class="calculator-key calculator-key-{int(c)}" on:click={addChar(c)}>
+      <button class="calculator-key calculator-key-{int(c)}" onclick={addChar(c)}>
         {c}
         <!-- {int(c)} -->
       </button>
     {/each}
   </div>
+  <!-- {#snippet footer()}
+    [caret: {caretLoc}]
+  {/snippet} -->
 </Window>
 
 <style lang="less">
